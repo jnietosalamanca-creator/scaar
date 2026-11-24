@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: scaar-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-scaar}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-scaar_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-scaar}
+    ports:
+      - "5432:5432"
+    volumes:
+      - scaar_pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-scaar} -d ${POSTGRES_DB:-scaar}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: scaar-backend
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  scaar_pgdata:

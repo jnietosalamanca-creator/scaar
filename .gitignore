@@ -1,0 +1,38 @@
+# Secrets
+.env
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.venv-test/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ML artifacts (versionar aparte con DVC/git-lfs)
+backend/app/ml/artifacts/*.joblib
+backend/app/ml/artifacts/*.pkl
+
+# Corpus descargado del SJF (regenerable con app.scripts.fetch_sjf /
+# app.scripts.fetch_ejecutorias). El dummy se queda como fixture.
+backend/corpus/*.jsonl
+!backend/corpus/tesis_dummy.jsonl
+
+# Node
+node_modules/
+.next/
+.turbo/
+
+# Editor
+.vscode/
+.idea/
+.DS_Store
+
+# Postgres data (sólo si alguien monta volumen local)
+pgdata/
+
+# Python packaging
+*.egg-info/
